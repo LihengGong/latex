@@ -1,1 +1,344 @@
+%%% Template originaly created by Karol Kozioł (mail@karol-koziol.net) and modified for ShareLaTeX use
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\renewcommand\familydefault{\sfdefault}
+\usepackage{tgheros}
+\usepackage[defaultmono]{droidmono}
+
+\usepackage{amsmath,amssymb,amsthm,textcomp}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{tikz}
+
+\usepackage{geometry}
+\geometry{total={210mm,297mm},
+left=25mm,right=25mm,%
+bindingoffset=0mm, top=20mm,bottom=20mm}
+
+
+\linespread{1.3}
+
+\newcommand{\linia}{\rule{\linewidth}{0.5pt}}
+
+% custom theorems if needed
+\newtheoremstyle{mytheor}
+    {1ex}{1ex}{\normalfont}{0pt}{\scshape}{.}{1ex}
+    {{\thmname{#1 }}{\thmnumber{#2}}{\thmnote{ (#3)}}}
+
+\theoremstyle{mytheor}
+\newtheorem{defi}{Definition}
+
+% my own titles
+\makeatletter
+\renewcommand{\maketitle}{
+\begin{center}
+\vspace{2ex}
+{\huge \textsc{\@title}}
+\vspace{1ex}
+\\
+\linia\\
+\@author \hfill \@date
+\vspace{4ex}
+\end{center}
+}
+\makeatother
+%%%
+
+% custom footers and headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{Assignment \textnumero{} 1}
+\cfoot{}
+\rfoot{Page \thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+%
+
+% code listing settings
+\usepackage{listings}
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    aboveskip={1.0\baselineskip},
+    belowskip={1.0\baselineskip},
+    columns=fixed,
+    extendedchars=true,
+    breaklines=true,
+    tabsize=4,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    frame=lines,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    keywordstyle=\color[rgb]{0.627,0.126,0.941},
+    commentstyle=\color[rgb]{0.133,0.545,0.133},
+    stringstyle=\color[rgb]{01,0,0},
+    numbers=left,
+    numberstyle=\small,
+    stepnumber=1,
+    numbersep=10pt,
+    captionpos=t,
+    escapeinside={\%*}{*)}
+}
+
+%%%----------%%%----------%%%----------%%%----------%%%
+
+\begin{document}
+
+\title{Assignment \textnumero{} 1}
+
+\author{Liheng Gong, lg2848@nyu.edu}
+
+\date{09/06/2017}
+
+\maketitle
+
+\section*{Ex. 1.1}
+
+\begin{lstlisting}[label={list:first},caption=Sample Bash code.]
+#! /bin/bash
+python stage1.py
+echo "Stage I done!"
+python stage2.py
+echo "Stage II done!"
+python stage3.py
+echo "Stage III done!"
+\end{lstlisting}
+
+With one ring, it is trivial. With two rings, it is easy to handle. When there are three rings, it becomes complicated and brain torturing if we start to think how to move ring 1 instead of ring 3. When it comes to four rings, I cannot even get a clear picture without resorting to recursion.
+
+$$H(4,A,B,C)=\left\{
+\begin{aligned}
+&H(3,A,C,B) \\
+&Move\, Ring\, 4\, from\, A\, to\, B\\
+&H(3,C,B,A) \\
+\end{aligned}
+\right.
+$$
+
+$$H(3,A,C,B)=\left\{
+\begin{aligned}
+&H(2,A,B,C) \\
+&Move\, Ring\, 3\, from\, A\, to\, B\\
+&H(2,B,C,A) \\
+\end{aligned}
+\right.
+$$
+
+$$H(3,A,B,C)=\left\{
+\begin{aligned}
+&H(2,A,C,B) \\
+&Move\, Ring\, 3\, from\, A\, to\, B\\
+&H(2,C,B,A) \\
+\end{aligned}
+\right.
+$$
+
+Even if we use recursion, the steps quickly explodes because the number of steps is exponential.
+
+
+\section*{Ex. 1.2}
+test test
+\begin{lstlisting}[label={list:second},caption=Sample Bash code.]
+#! /bin/bash
+test test
+\end{lstlisting}
+
+
+\section*{Ex. 1.3}
+
+\textbf{Answer to a:} Beginners will probably ask which pole should ring 1(the smallest one) go since most beginners tend to delve into the details instead of thinking and analyzing in an abstract way.
+
+~\\
+\noindent\textbf{Answer to b:} A pro would ask: which pole should ring n go because by asking that, we are forced to ask the second question very naturally: which pole should ring 1 to ring n-1 go? Since ring n should go to pole B, ring 1 to ring n-1 should go to the spare rings.
+
+Since there are two spare rings, the next question to ask is: which ring should go to pole D and which rings should go to pole C?
+My conclusion is that ring n-1 should go to pole D and ring 1 to n-2 should go to pole C. 
+Why?
+\if false
+Suppose we move a smaller ring, say k, to pole D.
+Then the sequence is:
+\begin{itemize}
+    \item {\color{red}{ ring 1 to k-1 from A to B}}
+    \item move ring k from A to D
+    \item move ring k+1 to n-1 from A to C
+    \item {\color{red}move ring 1 to k-1 from B to C}
+    \item move ring n from A to B
+    \item {\color{red}move ring 1 to k-1 from C to A}
+    \item move ring k+1 to n-1 from C to B
+    \item move ring k from D to B
+    \item {\color{red}move ring 1 to k-1 from A to B}
+
+\end{itemize}
+But if we move n-1 from A to D, the operation sequence is:
+\begin{itemize}
+    \item move ring 1 to n-2 from A to C
+    \item move ring n-1 from A to D
+    \item move ring n from A to B
+    \item move ring n-1 from D to B
+    \item move ring 1 to n -2 from C to B
+\end{itemize}
+\fi
+Actually I'm having difficulty to find a strict prove at the moment, but I still want to write down my thoughts since I believe they're very close to a strict proof.
+
+Suppose some plate other than n-1, say k, is placed on pole D. 
+Then the sequence is:
+\begin{itemize}
+    \item ring 1 to k-1 from A to B 
+    \item move ring k from A to D  
+    \item {\color{red}move ring k+1 to n-1 from A to C}
+    \item {\color{red}move ring 1 to k-1 from B to C}
+    \item move ring n from A to B
+    \item {\color{red}move ring 1 to k-1 from C to A}
+    \item {\color{red}move ring k+1 to n-1 from C to B}
+    \item move ring k from D to B
+    \item move ring 1 to k-1 from A to B
+
+\end{itemize}
+The four movements who are marked {\color{red}red} on the above are actually standard Hanoi Tower problem because there are only three poles available for use when these movements occurs.
+So we can write down the total steps of n rings as:
+$
+\\M(n) = M(k-1) + 1 + 2^{n-k-2} - 1 + 1 + 2^{k-2} -1 + 1 + 2^{k-2}-1 + 2^{n-k-2} - 1 + 1 + M(k-1) \\
+=2M(k-1) + 2^{n-k-1} + 2^{k-1} -1
+$
+
+
+~\\
+On the other hand, if we move n-1 from A to D, the operation sequence is:
+\begin{itemize}
+    \item move ring 1 to n-2 from A to C
+    \item move ring n-1 from A to D
+    \item move ring n from A to B
+    \item move ring n-1 from D to B
+    \item move ring 1 to n -2 from C to B
+\end{itemize}
+and from the recursion process it is easy to know the total steps are:
+
+
+
+\begin{lstlisting}[label={list:third},caption=Sample Bash code.]
+#! /bin/bash
+test test
+\end{lstlisting}
+
+
+\section*{Ex. 1.4}
+test test
+\begin{lstlisting}[label={list:fourth},caption=Sample Bash code.]
+#! /bin/bash
+test test
+\end{lstlisting}
+
+
+\section*{Ex. 1.5}
+test test
+\begin{lstlisting}[label={list:fifth},caption=Sample Bash code.]
+#! /bin/bash
+test test
+\end{lstlisting}
+
+\section*{Ex. 1.6}
+test test
+\begin{lstlisting}[label={list:sixth},caption=Sample Bash code.]
+#! /bin/bash
+test test
+\end{lstlisting}
+
+
+\section*{Ex. 1.7}
+test test
+\begin{lstlisting}[label={list:seventh},caption=Sample Bash code.]
+#! /bin/bash
+test test
+\end{lstlisting}
+
+
+
+\section*{Ex. 1.12}
+
+To be honest, I highly doubted whether the algorithm provided by Professor Siegel is the correct one(i.e. whether it is the slowest one) and I even "designed" a slower one(at least I though it was slower), but after some thought, I started to realize how stupid I am.
+
+First the algorithm by Professor Siegel:
+
+\begin{lstlisting}[label={list:eighth},caption=Pseudo code -- slow Towers of Hanoi.]
+
+procedure SloTh(n, A, B, C);
+   input: the n smallest rings start on pole A in sorted order;
+   output: the n rings are moved in a legal, complicated pattern that ends with all on B in sorted order and as slow as possible;
+   if n equals 1 then:
+     move ring 1 from A to C;
+     move ring 1 from C to B;
+   else:
+     SloTh(n - 1, A, B, C); # move ring 1:n-1 from pole A to pole B
+     move ring n from A to C;
+     SloTh(n - 1, B, A, C); # move ring 1:n-1 from pole B to pole A
+     move ring n from C to B;
+     SloTh(n - 1, A, B, C); # move ring 1:n-1 from pole A to pole B
+   endif
+end_ SloTh
+
+\end{lstlisting}
+
+[The following discussion were based on my own understanding on September 5th. However, Professor Siegel explained this problem thoroughly in the recitation session on September 9th. I was happy that my own understanding was correct, but it is basically the same with Professor Seigel's explanation.]
+
+Discussion regarding Listing~\ref{list:third}\ldots{} 
+As professor Seigel said, the first step to solve a problem is to ask the right question. So the first question I want to ask is: for n rings how many configurations are possible?
+
+\textbf{Answer}: The constraint is that smaller rings should be placed on top of larger rings. So let's place these n rings one by one from large to small to ensure of that constraint. As discussed, the possible places for ring n(the largest one) is 3, and the possible places for ring n - 1 is 3, and so on. As a result, for n rings, the number of all configurations Cf(n) is:
+
+$$Cf(n) = 3^{n}$$
+
+Now let's calculate the ring-move count R(n) for procedure SloTh(n, A, B, C).
+From the recursion we know that:
+$$R(n)=\left\{
+\begin{aligned}
+&2  & if &  n = 1 \\
+&3R(n-1) + 2  & if &  n > 1 \\
+\end{aligned}
+\right.
+$$
+The above equation is a linear recursive equation and we can easily find its solution as:
+$$
+R(n) = 3^{n} - 1
+$$
+Each ring remove produces one configuration, and if we count the initial configuration(i.e. all n rings are on pole A), then the number of all possible configurations from these moves are:
+$$
+Cm(n) = 3^{n}
+$$
+Obviously, $$Cf(n) = Cm(n)$$, but can we say that procedure SloTh(n, A, B, C) produces all the possible configurations? Unfortunately we do not have much confidence to say yes at the moment because there might be duplicates in configurations produced by procedure SloTh(n, A, B, C).
+
+So our next task is to prove(or disprove) all configurations produced by procedure SloTh(n, A, B, C) are unique, i.e. there are no duplicates in them.
+
+The only thing we can rely on is the recursion relationship.
+
+First, let's check the base case(i.e. n = 1)
+When n = 1, we move ring 1 from pole A to pole C, then from pole C to pole B. This produces two steps and 3 different configurations. So our guess is correct for n = 1.
+
+Now let's assume that SloTh(n - 1, A, B, C) produces $3^{n-1}$ different configurations(i.e. no duplicates). It is time to stare at the recursive procedure.
+
+When SloTh(n - 1, A, B, C) is called, the largest ring(ring n) sits on pole A, so we have $3^{n-1}$ different configurations with ring n on pole A.
+
+Then our program moves ring n from pole A to pole C and calls SloTh(n - 1, B, A, C). Same story, we have $3^{n-1}$ different configurations with ring n on pole C.
+
+At last, our program moves ring n from pole C to pole B and calls Sloth(n - 1, A, B, C), this produces $3^{n-1}$ different configurations with ring n on pole B.
+
+There are no duplicates in the configurations above because:
+
+1. When ring n sit on a specific pole(A or B or C), there are no duplicates.
+
+2. When ring n sit on different poles, there are still no duplicates because ring n's place is different.
+
+
+
+
+\end{document}
 
