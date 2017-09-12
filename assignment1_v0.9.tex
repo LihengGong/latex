@@ -1,0 +1,1443 @@
+%%% Template originaly created by Karol Kozioł (mail@karol-koziol.net) and modified for ShareLaTeX use
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\renewcommand\familydefault{\sfdefault}
+\usepackage{tgheros}
+\usepackage[defaultmono]{droidmono}
+
+\usepackage{amsmath,amssymb,amsthm,textcomp}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+\usepackage{geometry}
+\geometry{total={210mm,297mm},
+left=25mm,right=25mm,%
+bindingoffset=0mm, top=20mm,bottom=20mm}
+
+
+\linespread{1.3}
+
+\newcommand{\linia}{\rule{\linewidth}{0.5pt}}
+
+% custom theorems if needed
+\newtheoremstyle{mytheor}
+    {1ex}{1ex}{\normalfont}{0pt}{\scshape}{.}{1ex}
+    {{\thmname{#1 }}{\thmnumber{#2}}{\thmnote{ (#3)}}}
+
+\theoremstyle{mytheor}
+\newtheorem{defi}{Definition}
+
+% my own titles
+\makeatletter
+\renewcommand{\maketitle}{
+\begin{center}
+\vspace{2ex}
+{\huge \textsc{\@title}}
+\vspace{1ex}
+\\
+\linia\\
+\@author \hfill \@date
+\vspace{4ex}
+\end{center}
+}
+\makeatother
+%%%
+
+% custom footers and headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{Assignment \textnumero{} 1}
+\cfoot{}
+\rfoot{Page \thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+%
+
+% code listing settings
+\usepackage{listings}
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    aboveskip={1.0\baselineskip},
+    belowskip={1.0\baselineskip},
+    columns=fixed,
+    extendedchars=true,
+    breaklines=true,
+    tabsize=4,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    frame=lines,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    keywordstyle=\color[rgb]{0.627,0.126,0.941},
+    commentstyle=\color[rgb]{0.133,0.545,0.133},
+    stringstyle=\color[rgb]{01,0,0},
+    numbers=left,
+    numberstyle=\small,
+    stepnumber=1,
+    numbersep=10pt,
+    captionpos=t,
+    escapeinside={\%*}{*)}
+}
+
+%%%----------%%%----------%%%----------%%%----------%%%
+
+\begin{document}
+
+\title{Assignment \textnumero{} 1}
+
+\author{Liheng Gong, lg2848@nyu.edu}
+
+\date{09/11/2017}
+
+\maketitle
+
+\section*{Ex. 1.1}
+First let's list standard Tower of Hanoi pseudo code here for convenience.
+\begin{algorithm}[H]
+\caption{Standard Tower of Hanoi procedure}\label{TOH1_1}
+\begin{algorithmic}[1]
+\Procedure{ToH}{$n, A, B, C$}
+  \If{$n==1$}
+    \State move ring $1$ from $A$ to $B$
+  \Else
+    \State ToH($n-1, A, C, B$);
+    \State move ring $n$ from $A$ to $B$;
+    \State ToH($n-1, C, B, A$);
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+With one ring, it is trivial. With two rings, it is easy to handle. When there are three rings, it becomes complicated and brain torturing if we start to think how to move ring 1 instead of ring 3. When it comes to four rings, I cannot even get a clear picture without resorting to recursion.
+
+$$H(4,A,B,C)=\left\{
+\begin{aligned}
+&H(3,A,C,B) \\
+&Move\, Ring\, 4\, from\, A\, to\, B\\
+&H(3,C,B,A) \\
+\end{aligned}
+\right.
+$$
+
+$$H(3,A,C,B)=\left\{
+\begin{aligned}
+&H(2,A,B,C) \\
+&Move\, Ring\, 3\, from\, A\, to\, C\\
+&H(2,B,C,A) \\
+\end{aligned}
+\right.
+$$
+
+$$H(3,C,B,A)=\left\{
+\begin{aligned}
+&H(2,C,A,B) \\
+&Move\, Ring\, 3\, from\, C\, to\, B\\
+&H(2,A,B,C) \\
+\end{aligned}
+\right.
+$$
+
+$$H(2,A,B,C)=\left\{
+\begin{aligned}
+&Move\, Ring\, 1\, from\, A\, to\, C\\
+&Move\, Ring\, 2\, from\, A\, to\, B\\
+&Move\, Ring\, 1\, from\, C\, to\, B\\
+\end{aligned}
+\right.
+$$
+
+$$H(2,B,C,A)=\left\{
+\begin{aligned}
+&Move\, Ring\, 1\, from\, B\, to\, A\\
+&Move\, Ring\, 2\, from\, B\, to\, C\\
+&Move\, Ring\, 1\, from\, A\, to\, C\\
+\end{aligned}
+\right.
+$$
+
+$$H(2,C,A,B)=\left\{
+\begin{aligned}
+&Move\, Ring\, 1\, from\, C\, to\, B\\
+&Move\, Ring\, 2\, from\, C\, to\, A\\
+&Move\, Ring\, 1\, from\, B\, to\, A\\
+\end{aligned}
+\right.
+$$
+
+Even if we use recursion, the steps quickly explodes because the number of steps is exponential.
+
+From the recursion tree, we can list all the configurations as below:
+
+(1)
+$$
+\begin{aligned}
+&1\\
+&2\\
+&3\\
+&4\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(2)
+$$
+\begin{aligned}
+&2\\
+&3\\
+&4\qquad\quad1\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(3)
+$$
+\begin{aligned}
+&3\\
+&4\quad\; 2\quad\;1\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(4)
+$$
+\begin{aligned}
+&3\quad\; 1\\
+&4\quad\; 2\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(5)
+$$
+\begin{aligned}
+&\quad\;\;\; 1\\
+&4\quad\; 2\quad\;3\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(6)
+$$
+\begin{aligned}
+&1\\
+&4\quad\; 2\quad\;3\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(7)
+$$
+\begin{aligned}
+&1\qquad\quad2\\
+&4\qquad\quad3\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(8)
+$$
+\begin{aligned}
+&\qquad\quad\;\;1\\
+&\qquad\quad\;\;2\\
+&4\qquad\quad\;3\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(9)
+$$
+\begin{aligned}
+&\qquad\quad\;\;1\\
+&\qquad\quad\;\;2\\
+&\qquad4\quad\;3\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(10)
+$$
+\begin{aligned}
+&\qquad1\quad2\\
+&\qquad4\quad3\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(11)
+$$
+\begin{aligned}
+&\quad\;\;\; 1\\
+&2\quad\; 4\quad\;3\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(12)
+$$
+\begin{aligned}
+&1\\
+&2\quad\; 4\quad\;3\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(13)
+$$
+\begin{aligned}
+&1\quad\; 3\\
+&2\quad\; 4\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(14)
+$$
+\begin{aligned}
+&\quad\;\;\; 3\\
+&2\quad\; 4\quad\;1\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(15)
+$$
+\begin{aligned}
+&\quad\;\;\; 2\\
+&\quad\;\;\; 3\\
+&\quad\;\;\; 4\quad\;1\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+(16)
+$$
+\begin{aligned}
+&\quad\;\;\; 1\\
+&\quad\;\;\; 2\\
+&\quad\;\;\; 3\\
+&\quad\;\;\; 4\\
+&A\quad B\quad C\\
+\end{aligned}
+$$
+
+\vspace{1.2in}
+
+\section*{Ex. 1.2}
+\textbf{Answer to a:} Actually a few weeks ago, I would attack this problem by thinking how should I move the first step, which "naturally" leads me to move the smallest ring, which will eventually lead me to nowhere because the details soon overwhelm me.
+\vspace{1.2in}
+
+
+\noindent\textbf{Answer to b:} To make my life easier I need to figure out what a DTH solver does. A DTH solver "collects" all these disordered rings and "puts" them on the target pole by decreasing size from bottom to top.
+
+So if I have a solver for $n-1$ rings, I will begin by asking the same old question: where should ring $n$ go?
+
+Answer is trivial: ring $n$ should go from the source pole(A or B or C) to the target pole B. In order for that, pole B should be empty(or only has ring $n$) before I move ring $n$, which means pole B should not be the target pole for the solver if ring $n$ is on A or C. Of course the pole on which ring $n$ sits should not be the target pole for the solver either.
+
+After applying the solver, pole B is "cleared", so I can move ring $n$ to pole B, and I can then apply the solver again to move ring 1 through $n-1$ to pole B.
+
+But if ring $n$ is on pole B, then I just use the solver and move ring 1 through $n-1$ to pole B and it is done.
+
+~\\
+\vspace{1.2in}
+
+
+So the following pseudo code is naturally derived from the reasoning process above:
+~\\
+\noindent\textbf{Answer to c:}
+\begin{algorithm}[H]
+\caption{Disordered Towers Hanoi pseudo code}
+\begin{algorithmic}[1]
+\Procedure{DTH}{$n, A, B, C$}
+  \If {n == 1}
+    \If {ring 1 is on $A$ or on $C$}
+       \State move it to $B$;
+    \Else
+       \State do nothing;
+    \EndIf
+  \Else:
+    \If {ring n on A}
+      \State DTH({$n-1, A, C, B$});
+      \State move ring n from $A$ to $B$;
+      \State DTH($n-1, C, B, A$);
+    \ElsIf {ring n on $B$}
+      \State DTH($n-1, A, B,C$);
+    \Else:
+      \State DTH($n-1, B, A, C$);
+      \State move ring $n$ from $C$ to $B$;
+      \State DTH($n-1, A, B, C$);
+    \EndIf
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+\iffalse
+\begin{lstlisting}[label={list:second},caption=Disordered Towers Hanoi pseudo code.]
+procedure DTH(n, A, B, C);
+  if n == 1:
+    if ring is on A or on C, move it to B;
+    else: do nothing;
+  else:
+    if ring n on A:
+      DTH(n-1, A, C, B);
+      move ring n from A to B;
+      DTH(n-1, C, B, A);
+    elseif ring n on B:
+      DTH(n-1, A, B,C);
+    else:
+      DTH(n-1, B, A, C);
+      move ring n from C to B;
+      DTH(n-1, A, B, C);
+  end if
+\end{lstlisting}
+\fi
+
+~\\
+\vspace{1.2in}
+
+
+\noindent\textbf{Answer to d:} Actually when designing procedure DTH for \textbf{Answer c}, I noticed that after calling the solver for n-1 rings, these n-1 rings are placed on a target pole and sorted. So if I want to move these n-1 rings again, I don't have to call DTH but only have to call a standard Hanoi Tower procedure ToH(n, A, B, C).
+
+\iffalse
+\begin{lstlisting}[label={list:third},caption=Improved Disordered Towers Hanoi pseudo code.]
+procedure IDTH(n, A, B, C);
+input: n rings distributed arbitrarily among three poles but stacked legally on each pole
+output: n rings on pole B, sorted with larger rings below smaller rings
+
+  if n == 1:
+    if ring is on A or on C, move it to B;
+    else: do nothing;
+  else:
+    if ring n on A:
+      IDTH(n-1, A, C, B);   #{target pole is C}
+      move ring n from A to B;
+      ToH(n-1, C, B, A);    #{target pole is B}
+    elseif ring n on B:
+      IDTH(n-1, A, B,C);
+    else:
+      IDTH(n-1, B, A, C);   #{target pole is A}
+      move ring n from C to B;
+      ToH(n-1, A, B, C);    #{target pole is B}
+  end if
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{Improved Disordered Towers Hanoi pseudo code}\label{IDTH}
+\begin{algorithmic}[1]
+\Procedure{IDTH}{$n, A, B, C$}\Comment{move n rings from A, B, C to B}
+  \If{$n == 1$}
+    \If{$ring 1 is on A$ or $on C$}
+      \State move ring 1 to $B$
+    \EndIf
+  \Else
+    \If{ring $n$ on $A$}
+      \State IDTH($n-1, A, C, B$);
+      \State move ring $n$ from $A$ to $B$;
+      \State ToH($n-1, C, B, A$)
+    \ElsIf{ring $n$ on $B$}
+      \State IDTH($n-1, A, B, C$);
+    \Else \Comment{ring $n$ is on $C$}
+      \State IDTH($n-1, B, A, C$);
+      \State move ring $n$ from $C$ to $B$;
+      \State ToH($n-1, A, B, C$);
+    \EndIf
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+$ToH$ is simpler than $DTH$, as a result, $IDTH$ is simpler than $DTH$
+
+\vspace{1.2in}
+
+\section*{Ex. 1.3}
+
+\textbf{Answer to a:} Beginners will probably ask which pole should ring 1(the smallest one) go since most beginners tend to delve into the details instead of thinking and analyzing in an abstract way.
+
+~\\
+\vspace{1.2in}
+
+
+\noindent\textbf{Answer to b:} A pro would ask: which pole should ring n go because by asking that, we are forced to ask the second question very naturally: which pole should ring 1 to ring n-1 go? Since ring n should go to pole B, ring 1 to ring n-1 should go to the spare rings.
+
+Since there are two spare rings, the next question to ask is: which ring should go to pole D and which rings should go to pole C?
+My conclusion is that ring n-1 should go to pole D and ring 1 to n-2 should go to pole C. 
+
+Actually I'm having difficulty to find a strict prove at the moment, but I still want to write down my thoughts since I believe they're very close to a strict proof.
+
+~\\
+First, let's write the pseudo code and calculate the movement steps. If we move n-1 from A to D, the operation sequence is:
+\begin{itemize}
+    \item move ring 1 to n-2 from A to C
+    \item move ring n-1 from A to D
+    \item move ring n from A to B
+    \item move ring n-1 from D to B
+    \item move ring 1 to n -2 from C to B
+\end{itemize}
+
+~\\
+\vspace{1.2in}
+
+\noindent\textbf{Answer to c:} And the pseudo code is:
+\iffalse
+\begin{lstlisting}[label={list:fourth},caption=steps listing -- Towers of Hanoi with four poles.]
+ToH4Poles(n, A, B, C, D)
+    if n == 1:
+      move ring 1 from A to B
+    elseif n == 2:
+      move ring 1 from A to D
+      move ring 2 from A to B
+      move ring 1 from D to B
+    else:
+      ToH4Poles(n-2, A, C, B, D);
+      move ring n-1 from A to D
+      move ring n from A to B
+      move ring n-1 from D to B
+      ToH4Poles(n-2, C, B, A, D);
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{Towers of Hanoi with four poles}\label{fourpoles}
+\begin{algorithmic}[1]
+\Procedure{ToH4Poles}{$n, A, B, C, D$}
+  \If{$n == 1$}
+    \State move ring $1$ from $A$ to $B$
+  \ElsIf{$n == 2$}
+    \State move ring $1$ from $A$ to $D$
+    \State move ring $2$ from $A$ to $B$
+    \State move ring $1$ from $D$ to $B$
+  \Else
+    \State ToH4Poles($n-2, A, C, B, D$);
+    \State move ring $n-1$ from $A$ to $D$
+    \State move ring $n$ from $A$ to $B$
+    \State move ring $n-1$ from $D$ to $B$
+    \State ToH4Poles($n-2, C, B, A, D$);
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\noindent and from the recursion process it is easy to know the total steps are:
+
+$$
+R(n) = 2R(n-2) + 3
+$$
+This non-homogeneous recursion equation can be easily solved(using characteristic equation) as below:
+$$
+R(n) = \frac{3+2\sqrt{2}}{2}\cdot \sqrt{2}^{n}+\frac{3-2\sqrt{2}}{2}\cdot (-\sqrt{2})^{n}-3
+$$
+Let's re-arrange the above expression to a more readable form:
+$$R(n)=\left\{
+\begin{aligned}
+&2^{k+2}-3 & if\; &n=2k+1 \\
+&3\cdot 2^{k} - 3  & if\; &  n =2k \\
+\end{aligned}
+\right.
+$$
+
+
+\vspace{1 ex}
+\noindent Now suppose some plate other than $n-1$, say $k$, is placed on pole $D$. 
+Then the sequence is:
+\begin{itemize}
+    \item \textcolor{red}{ring $1$ to $k-1$ from $A$ to $B$}
+    \item move ring $k$ from $A$ to $D$
+    \item move ring $k+1$ to $n-1$ from $A$ to $C$
+    \item \textcolor{red}{move ring $1$ to $k-1$ from $B$ to $C$}
+    \item move ring $n$ from $A$ to $B$
+    \item \textcolor{red}{move ring $1$ to $k-1$ from $C$ to $A$}
+    \item move ring $k+1$ to $n-1$ from $C$ to $B$
+    \item move ring $k$ from $D$ to $B$
+    \item \textcolor{red}{move ring $1$ to $k-1$ from $A$ to $B$}
+\end{itemize}
+
+
+The four steps marked \textcolor{red}{red} above are actually standard Hanoi Tower problem because there are only three poles available to use when these movements occur.
+\iffalse
+So we can write down the total steps of n rings as:
+\begin{equation}
+\begin{split}M(n) = &M(k-1) + 1 + 2^{n-k-2} - 1 + 1 + 2^{k-2} -1 + 1 + 2^{k-2}-1 + 2^{n-k-2} - 1 + 1 + M(k-1) \\
+&=2M(k-1) + 2^{n-k-1} + 2^{k-1} -1
+\end{split}
+\end{equation}
+\fi
+
+We can also see from the above steps that there are redundant moves in the above procedure; as a result, they are slower than the procedure $ToH4Poles(n, A, B, C, D)$.
+
+\vspace{1.2in}
+
+\section*{Ex. 1.4}
+\textbf{Answer to a:} Actually the hint is enough to solve this question. To facilitate the discussion, I'll list the pseudo code of standard Hanoi problem:
+
+\iffalse
+\begin{lstlisting}[label={list:seventh},caption=Standard Tower of Hanoi procedure.]
+procedure ToH(n, A, B, C);
+  if n == 1:
+    move ring 1 from A to B;
+  else:
+    ToH(n-1, A, C, B);
+    move ring n from A to B;
+    ToH(n-1, C, B, A);
+  end if
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{Standard Tower of Hanoi procedure}\label{TOH1_4}
+\begin{algorithmic}[1]
+\Procedure{ToH}{$n, A, B, C$}
+  \If{$n==1$}
+    \State move ring $1$ from $A$ to $B$
+  \Else
+    \State ToH($n-1, A, C, B$);
+    \State move ring $n$ from $A$ to $B$;
+    \State ToH($n-1, C, B, A$);
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+We can see from the procedure above that for rings $1$ through $n-1$ when they are moved from pole $A$ to pole $C$, the number of flips for each ring is the same as the number of flips when they are moved from pole $C$ to pole $B$, which means each of these rings is flipped even times. So the answer is: for ring $1$ through $n-1$, the color is red.
+
+\noindent And because ring $n$ is only flipped once, its color is reversed and hence is white.
+
+~\\
+\vspace{1.2in}
+
+
+\textbf{Answer to b:} The only difference between b) and a) is the color of ring $n$. So the same trick here: let's ask the most important question: where ring $n$ should go if we want to make sure that its color is red when it is placed to pole B? The answer is trivial: ring $n$ should be flipped even times and since the minimum times is 2, so ring $n$ should be flipped twice before it lands on pole B, which requires its moving sequence to be: from pole A to pole C, then from pole C to pole B. The moving sequence of ring $n$ "forces" the moving sequence of stack of ring 1 through n-1 to be:
+\begin{itemize}
+    \item move ring 1 through n-1 from A to B
+    \item move ring n from A to C
+    \item move ring 1 through n-1 from B to A
+    \item move ring n from C to B
+    \item move ring 1 through n-1 from A to B
+\end{itemize}
+But wait a moment, although the color of ring n is red now, how can we make sure that the stack of ring 1 through n is also red? Note that this stack as a whole is "moved" three times. How about adding another "move" for this stack to make sure it is "moved" even times?
+\begin{itemize}
+    \item move ring 1 through n-1 from A to B
+    \item move ring n from A to C
+    \item move ring 1 through n-1 from B to A
+    \item move ring n from C to B
+    \item move ring 1 through n-1 from A to C
+    \item move ring 1 through n-1 from C to B
+\end{itemize}
+And from the above discussion I have my first solution:
+\iffalse
+\begin{lstlisting}[label={list:seventh0},caption=Red Tower of Hanoi procedure.]
+procedure RTH(n, A, B, C);
+  if n == 1:
+    move ring 1 from A to C;
+    move ring 1 from C to B;
+  else:
+    RTH(n-1, A, B, C);
+    move ring n from A to C;
+    RTH(n-1, B, A, C);
+    move ring n from C to B;
+    RTH(n-1, A, C, B);
+    RTH(n-1, C, B, A);
+  end if
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{Red Tower of Hanoi procedure}\label{RTH}
+\begin{algorithmic}[1]
+\Procedure{RTH}{$n, A, B, C$}
+  \If {$n == 1$}:
+    \State move ring $1$ from $A$ to $C$;
+    \State move ring $1$ from $C$ to $B$;
+  \Else:
+    \State RTH($n-1, A, B, C$);
+    \State move ring $n$ from $A$ to $C$;
+    \State RTH($n-1, B, A, C$);
+    \State move ring $n$ from $C$ to $B$;
+    \State RTH($n-1, A, C, B$);
+    \State RTH($n-1, C, B, A$);
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+But after attending the tutoring session hosted by Jianyang, I figured out that I needed to revise my solution. I realized that I was still focusing too much on the details when working out the above solution. I need to follow Professor Siegel's advice to think abstractly, i.e. to figure out what my procedure should do as a function instead of focusing on what one specific step in my function does. Now let's redesign the function from scratch and focus on what the function does as a whole. So the input is: n sorted rings on pole A with all the top sides red. And the output should be: $n$ sorted rings on pole B with all the top sides red.
+
+As a beginner, to make my life easier, I'll steal Professor Siegel's trick by imagining a solver for $n-1$ rings. The first question to ask is exactly the same: where should ring $n$ go? Same answer: it should first go to pole C, then go to pole D. And with $n$ rings my function should do things as below:
+\begin{itemize}
+    \item use the solver to move ring 1 through n-1 from A to B
+    \item move ring n from A to C
+    \item use the solver to move ring 1 through n-1 from B to A
+    \item move ring n from C to B
+    \item use the solver to move ring 1 through n-1 from A to B
+\end{itemize}
+How do we know the function above does what it is expected to do?
+First, after each "move", the solver ensures that all the top sides of ring 1 through n-1 are red. Second, ring n is flipped twice, so its top side is also red. So, our function is correct.
+
+The steps above can be easily translated to pseudo code:
+\iffalse
+\begin{lstlisting}[label={list:seventh1},caption=Improved Red Tower of Hanoi procedure.]
+procedure IRTH(n, A, B, C);
+  if n == 1:
+    move ring 1 from A to C;
+    move ring 1 from C to B;
+  else:
+    IRTH(n-1, A, B, C);
+    move ring n from A to C;
+    IRTH(n-1, B, A, C);
+    move ring n from C to B;
+    IRTH(n-1, A, B, C);
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{Improved Red Tower of Hanoi procedure}\label{IRTH}
+\begin{algorithmic}[1]
+\Procedure{IRTH}{$n, A, B, C$}
+  \If {$n == 1$}:
+    \State move ring $1$ from $A$ to $C$;
+    \State move ring $1$ from $C$ to $B$;
+  \Else:
+    \State IRTH($n-1, A, B, C$);
+    \State move ring $n$ from $A$ to $C$;
+    \State IRTH($n-1, B, A, C$);
+    \State move ring $n$ from $C$ to $B$;
+    \State IRTH($n-1, A, B, C$);
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+IRTH is definitely faster than RTH because there are 3 recursive calls in the IRTH versus 4 recursive calls in RTH.
+
+~\\
+
+\vspace{1.2in}
+\noindent\textbf{Answer to c:} 
+From problem a), my observation is that if we do a standard Tower of Hanoi procedure call for $n$ rings to move them from pole A to pole B, the color of the largest ring(ring $n$) will be flipped, with all the other rings' color being the same as their original one. So, with one ToH(n, A, B, C) procedure call, color of ring n will be flipped. With this understanding, we can devise the steps as below:
+\begin{itemize}
+    \item do a standard ToH(n, A, B, C) {now ring n is white and other rings are red}
+    \item do a IRTH(n-1, B, A, C) {now ring 1 through n-1 sit on pole A with red color facing up and ring n sits on pole B with white color facing up}
+\end{itemize}
+
+With the above steps bearing in mind, we can devise the pseudo code as below:
+\iffalse
+\begin{lstlisting}[label={list:seventh2},caption=Tower of Hanoi Flip Color procedure]
+procedure THFC(n, A, B, C);
+  if n == 1:
+    move ring 1 from A to B;
+  else:
+    ToH(n, A, B, C); #{flip color of ring n, upside color of other rings is still red}
+    IRTH(n-1, B, A, C);  #{ring 1 through n-1 are moved back to pole A and their upside color is still red}
+    THFC(n-1, A, B, C);  #{recursive call to flip the color of ring 1 through n-1}
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{Tower of Hanoi Flip Color(THFC) procedure}\label{THFC}
+\begin{algorithmic}[1]
+\Procedure{THFC}{$n, A, B, C$}
+  \If {n == 1}
+    \State move ring $1$ from $A$ to $B$;
+  \Else:
+    \State ToH($n, A, B, C$); \Comment{flip color of ring n, upside color of other rings is still red}
+    \State IRTH($n-1, B, A, C$);  \Comment{ring 1 through n-1 are moved back to pole A using IRTH() and the upside color of these rings is still red}
+    \State THFC($n-1, A, B, C$);  \Comment{recursive call to flip the color of ring 1 through n-1}
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+(Now I understand why Question a) and Question b) are asked before Question c))
+
+~\\
+But are we done here? Actually during tutoring session, Yunjian gave us a hint: design a function from scratch, which move n rings from one pole to another pole and at the same time flip all rings' color.
+
+Let's design one. If we begin with function Red2WhiteToH, which moves n rings from one pole to another pole and also change them from red color on upper side to white color on upper side, let's see if this function can work as expected:
+
+If I want to move ring n from pole A to pole B, I need to move ring 1 through n-1 from pole A to pole C. But after ring 1 through n-1 are on pole C, their color are white can my Red2WhiteToH cannot be applied to these rings any more.
+
+Hence I need to design another function: White2RedToH, which moves n rings from one pole to another pole and also change them from white color on upper side to red color on upper side.
+
+Two functions might work, but if we think for a while, we found that these two functions Red2WhiteToH and White2RedToH can be generalized as one function FlipColorToH, which moves n rings from one pole to another pole and at the same time flip all rings' color.
+
+
+
+
+\vspace{1.2in}
+
+\section*{Ex. 1.5}
+The hint is to define two functions, but as a beginner, my first response is: can we finish this task with only one function?
+Same trick: the first question to ask is: what should I do before I can move the largest ring $n$ from pole A to pole B? Answer is simple: I just need to move ring 1 through $n-1$ from pole A to pole C. But here is the problem: I cannot do that because that move would violate the rule. So one function might not be a good idea and I think that's why the hint advises us to define two functions.
+
+The constraint is a ring can only be moved from pole A to pole B, or pole B to pole C, or pole C to pole A.
+So let's devise the first function OneJump. What it should do? The function should move $n$ rings from the source pole to the "next" pole and satisfy all the constraints.
+Now the second function TwoJump This function is supposed to move $n$ rings from the source pole to the "next next" pole and satisfy all the constraints.
+
+Let's check the steps in function OneJump. To move the largest ring $n$ from A to B, ring 1 through $n-1$ should be moved from A to C, but that is a two-jump.
+\begin{itemize}
+    \item move ring 1 through n-1 from A to C using a two-jump function
+    \item move ring n from A to B
+    \item move ring 1 through n-1 from C to B using a two-jump function
+\end{itemize}
+
+Now steps of function TwoJump. This is where the story becomes tricky. My goal is to move $n$ rings from one pole, say A, to the next next pole, say C.
+To do that, my first response is to move $n-1$ rings from pole A to pole B. But, ring $n$ will be stuck because its only valid destination is pole B, which is occupied by ring 1 through n-1. Where am I wrong? Actually, I forget the same trick that is used to solve Hanoi problems: ask the right question. I forget to ask: how can I move ring $n$ from pole A to pole C? Answer is: move it from pole A to pole B, but that requires the movement of ring 1 through n-1 from pole A to pole C. Next, move ring $n$ from pole B to pole C, and that also requires the movement of ring 1 through n-1 from pole C to pole A. At the last step, I can use a recursion to move ring 1 through n-1 from pole A to pole C.
+
+The above steps can be easily translated to pseudo code:
+\iffalse
+\begin{lstlisting}[label={list:eighth},caption=pseudo code of one-jump function.]
+procedure OneJump(n, A, B, C);
+  if n == 1:
+    move ring 1 from A to B
+  else:
+    TwoJump(n-1, A, B, C)
+    move ring n from A to B
+    TwoJump(n-1, C, A, B)
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{pseudo code of one-jump function}\label{OneJump}
+\begin{algorithmic}[1]
+\Procedure{OneJump}{$n, A, B, C$}\Comment{A is source and B is destination}
+  \If n == 1:
+    \State move ring $1$ from $A$ to $B$
+  \Else:
+    \State TwoJump($n-1, A, B, C$)
+    \State move ring $n$ from $A$ to $B$
+    \State TwoJump($n-1, C, A, B$)
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\iffalse
+\begin{lstlisting}[label={list:eighth0},caption=pseudo code of two-jump function.]
+procedure TwoJump(n, A, B, C); #{A is source and C is destination}
+  if n == 1:
+    move ring 1 from A to B;
+    move ring 1 from B to C;
+  else:
+    TwoJump(n-1, A, B, C);
+    move ring n from pole A to pole B;
+    OneJump(n-1, C, A, B);
+    move ring n from pole B to pole C;
+    TwoJump(n-1, A, B, C);
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{pseudo code of two-jump function}\label{TwoJump}
+\begin{algorithmic}[1]
+\Procedure{TwoJump}{$n, A, B, C$} \Comment{A is source and C is destination}
+  \If {$n == 1$}
+    \State move ring $1$ from $A$ to $B$;
+    \State move ring $1$ from $B$ to $C$;
+  \Else:
+    \State TwoJump($n-1, A, B, C$);
+    \State move ring $n$ from pole $A$ to pole $B$;
+    \State OneJump($n-1, C, A, B$);
+    \State move ring $n$ from pole $B$ to pole $C$;
+    \State TwoJump($n-1, A, B, C$);
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+In order to move n rings from A to B, we just call OneJump(n, A, B, C) and we are done.
+
+~\\
+
+\textbf{[Further discussion]}
+During our tuturing hours, Yunjian gave us a hint that this problem can also be solved by one single function. So how do we attack this problem using one single function?
+
+
+First, this function should move $n$ rings to the next pole(e.g. from A to B) and at the same time satisfy all the constraints. 
+
+Then let's refine the steps to see it is possible to carry on the steps. Of course, before we begin, the first question to ask is: what if we want to move the largest ring $n$ from A to B. Answer is that we should first move ring 1 through $n-1$ from A to C. But that would violate the constraints. How can we achieve that goal without violating any constraints? Actually we can move ring 1 through $n-1$ from A to B, then from B to C. Next we move ring $n$ from A to B. At the last step, we move ring 1 through $n-1$ from C to A, then from A to B.
+
+The steps are:
+\begin{itemize}
+    \item move n-1 rings from A to B
+    \item move n-1 rings from B to C
+    \item move ring n from A to B
+    \item move n-1 rings from C to A
+    \item move n-1 rings from A to B
+\end{itemize}
+And the above steps can be easily translated to psedudo code:
+\iffalse
+\begin{lstlisting}[label={list:eighth1},caption=pseudo code of Circular Tower of Hanoi function.]
+procedure CTH(n, A, B, C);
+  if n == 1:
+    move ring 1 from A to B;
+  else:
+    CTH(n-1, A, B, C);
+    CTH(n-1, B, C, A);
+    move ring n from A to B;
+    CTH(n-1, C, A, B);
+    CTH(n-1, A, B, C);
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{pseudo code of Circular Tower of Hanoi function}\label{CTH}
+\begin{algorithmic}[1]
+\Procedure{CTH}{$n, A, B, C$}
+  \If{$n == 1$}
+    \State move ring $1$ from $A$ to $B$;
+  \Else:
+    \State CTH($n-1, A, B, C$);
+    \State CTH($n-1, B, C, A$);
+    \State move ring $n$ from $A$ to $B$;
+    \State CTH($n-1, C, A, B$);
+    \State CTH($n-1, A, B, C$);
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+But which one is better? OneJump/TwoJump or CTH?
+Let's make a comparison.
+In each CTH function of size $n$, sub-problem CTH of size $n-1$ is executed 4 times plus a single ring move, so the recursive equation is:
+$$
+C(n) = 4C(n-1) + 1
+$$
+
+As for the OneJump/TwoJump implementation, in OneJump function of size $n$, two TwoJump of size $n-1$ are executed, so let's check function TwoJump. In TwoJump of size $n$, 2 TwoJump of size $n-1$ and 1 OneJump of size $n-1$ are executed plus 2 ring moves. And that OneJump of size $n-1$ can be further reduced to 2 TwoJump of size $n-2$ plus one ring move. So the recursive equation is:
+$$
+T(n) = 2T(n-1) + 2T(n-2) + 3
+$$
+Apparently $T(n) < C(n)$ for the same $n$, because the steps of problem of size $n-2$ are less than the steps of problem of size $n-1$. So the conclusion is that the two recursive co-routine version is better than the single function version.
+
+\vspace{1.2in}
+
+\section*{Ex. 1.6}
+\textbf{Answer to a:} For graph problems I'm only a beginner. If I understand the quesion correctly, the main idea of this algorithm is to pick a new color in each round, and apply that color to vertices as many as possible until no vertices can be applied that color. Then we pick a new color and start the next round until all vertices are colored.
+
+As stated in this question, the most difficult part is when we are trying to apply a color to one vertex, how to know whether one or more of its neighbors has already get that same color? The algorithm in our text book Page 14 solves this problem by maintaining an array $mostRecentNeighborColor[1...n]$. Each time a vertex $v$ is colored, all the neighbors of this vertex $v$ will be "notified" by setting that neighbor's bucket in the array to that color. So if we want to apply a color $c$ to  vertex $v$, we just check whether $mostRecentNeighborColor[v]$ equals $c$. If the answer is yes, then at least one of $v$'s neighbor has already been colored $c$, and as a result, color $c$ cannot be applied to current vertex $v$. Otherwise, none of $v$'s neighbors has color $c$ and the current color $c$ can be applied to vertex $v$.
+
+\iffalse
+\begin{lstlisting}[label={list:ninth0},caption=repeating the procedure in text book Page 14]
+procedure color(n, Neighbors[1...n], ColorOf[1...n]);
+  create the link list Uncolored and insert each vertex into this list
+  create an array mostRecentNeighborColor[1...n]
+  while Uncolored is not empty:
+    pick a new color c
+    foreach vertex v in Uncolored:
+      if mostRecentNeighborColor[v] is not c:
+        remove vertex v from Uncolored;
+        ColorOf[v] = c;
+        foreach neighbor w of vertex v:
+          mostRecentNeighborColor[w] = c;
+        endfor
+      endif
+    endfor
+  endwhile
+endprocedure
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{repeating the procedure in text book Page 14}\label{Ex16a}
+\begin{algorithmic}[1]
+\Procedure{color}{$n,b$};
+  \State create the link list Uncolored and insert each vertex into this list;
+  \State create an array mostRecentNeighborColor[1...n];
+  \While {$Uncolored \not= Nil$}
+    \State pick a new color $c$;
+    \For {each vertex $v$ in $Uncolored$}
+      \If {$mostRecentNeighborColor[v] \not= c$}
+        \State remove vertex $v$ from $Uncolored$;
+        \State $ColorOf[v] \gets c$;
+        \For {each neighbor $w$ of vertex $v$:}
+          \State $mostRecentNeighborColor[w] \gets c$;
+        \EndFor
+      \EndIf
+    \EndFor
+  \EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+~\\
+
+(I found that memorizing a procedure is almost impossible unless you thoroughly understand it, but once you understand an algorithm, writing the procedure is trivial)
+
+\vspace{1.2in}
+
+
+\textbf{Answer to b:}
+Before delving into the details of question b), let's compare the main ideas behind part 1 and part 2. 
+
+The main idea behind part 1 is that whenever we pick a new color, we use it to color as many vertices as possible, so in each loop round we go through one color.
+
+The main idea behind part 2 is that in each loop round we go through one vertex, and we'll color that vertex to the first color that does not "conflict" with any of its neighbor's color. That is to say, for the current vertex, if we can find a color and none of the current vertex's neighbors is applied this color, then this color can be applied to the current vertex.
+
+So the first question is: how to maintain a vertex's neighbor's color info? The answer is we only care about whether a color has been used by the neighbor vertices or not, which is "yes" or "no". And that info can be represented by a bit. Since in class Professor Siegel already gave us a hint to use bitmap, I'll use bitmap to try to solve this problem. 
+
+We'll maintain a bitmap $colorBitMap[1...k]$, and $k$ is the numnber of color used so far; the index of this bitmap is the color number. Each time we're trying to color a new vertex, we visit all the neighbors of this vertex and "mark" every neighbor's color in our bitmap $colorBitMap[1...k]$. By "mark" we mean that if a neighbor has been colored, say $c$, we use $c$ as an index and set $colorBitMap[c]$ as $true$.
+
+So after we visit all the neighbors of a vertex, these neighbors' color will be marked(indexed) in bitmap. Then we traverse this bitmap and find the first color that has not been marked. If all the colors in the current bitmap has been marked, then we add a new color and extend the bitmap.
+
+The hint also reminds us that each time we visit(try to color) a new vertex, we need to clear the bitmap because the information in that bitmap is from the previous vertex.
+
+\iffalse
+\begin{lstlisting}[label={list:ninth1},caption=another approach to color]
+procedure color2(n, Neighbors[1..n], ColorOf[1...n]);
+  create the link list Uncolored and insert each vertex into this list;
+  create an empty element color bitmap;
+  while Uncolored is not empty:
+        foreach vertext v in Uncolored:
+            foreach element CBM[i] in bitmap CBM:
+                CBM[i] = false;
+            endfor
+            foreach neighbor w in the neighbor list of v:
+                if w has been colored:
+                    CBM[color of v] = true;
+                endif
+            endfor
+            foreach element CBM[i] in bitmap CBM:
+                if CBM[i] is false:
+                    remove v from colorable;
+                    ColorOf[v] = i
+                endif
+            endfor
+            if bitmap CBM is empty or all the elements in it has been\ marked as true:
+                pick a new color c;
+                remove v from colorable;
+                ColorOf[v] = c;
+                extend the size of bitmap CBM by 1;
+            endif
+        endfor
+  endwhile
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{another approach to color}\label{Ex16b}
+\begin{algorithmic}[1]
+\Procedure{color2}{$n, Neighbors[1..n], ColorOf[1...n]$}
+  \State create the link list $Uncolored$ and insert each vertex $v$ into this list;
+  \State create an empty element color $bitmap$;
+  \While{$Uncolored \neq empty$}:
+        \For {each vertex $v$ in $Uncolored$}
+            \For {each element $CBM[i]$ in bitmap $CBM$} 
+                \State $CBM[i] \gets false$;\Comment{clear bitmap at the begin of each round}
+            \EndFor
+            \For {each neighbor $w$ in the neighbor list of $v$}
+                \If {$w$ has been colored}
+                    \State $CBM[color of v] \gets true$\Comment{Mark all of vertex $v$'s neighbors' color in bitmap}
+                \EndIf
+            \EndFor
+            \For{each element $CBM[i]$ in bitmap $CBM$}
+                \If {$CBM[i]$ is $false$}\Comment{The first available color found}
+                    \State remove vertex $v$ from $Uncolored$;
+                    \State $ColorOf[v] \gets i$
+                \EndIf
+            \EndFor
+            \If {bitmap $CBM$ is empty or all the elements in it has been marked as true}
+                \State pick a new color $c$\Comment{No color available, pick a new one}
+                \State remove $v$ from $Uncolored$;
+                \State $ColorOf[v] \gets c$
+                \State extend the size of bitmap $CBM$ by $1$
+            \EndIf
+        \EndFor
+  \EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+~\\
+\vspace{1.2in}
+
+\noindent\textbf{Answer to c:} 
+I have to admit that I'm a beginner especially to graph algorithms. I'll try my best to analyze the performance of pseudo code Listing Algorithm 12 and pseudo code Listing Algorithm 13.
+
+\noindent\textbf{performance of part a:} As discussed in textbook, in algorithm 12, each edge is visited twice and each vertex is visited once, so the total visit times of assignment of $mostRecentNeighborColor$ are: $$2|E|+|V|$$
+
+\noindent and the total visit times of testing $mostRecentNeighborColor$ are: $$2|E|+|V|$$
+
+~\\
+\noindent\textbf{performance of part b:}
+Since we sequence through the vertices one by one, each vertex is visited once, so the visit times are: $$|V|$$
+And each edges are visited twice when we're going through every vertex's neighbors, so the total visit times should be no less than:
+$$2|E|+|V|$$
+
+\vspace{1.2in}
+
+\section*{Ex. 1.7}
+\noindent\textbf{Answer to i):} If $Y \neq Nil$, We just need to save the original  $Y.next$(otherwise it will be lost), and then point $Y.next$ to $M$.
+
+\begin{algorithm}[H]
+\caption{process two lists Y and M}
+\begin{algorithmic}[1]
+\Procedure{processLists}{$Y, M$}
+  \If{$Y \neq Nil$}
+    \State $Nxt \gets Y.next$
+    \State $Y.next \gets M$
+    \State $M \gets Y$ \Comment{Now M is Y's first element followed by old M}
+    \State $Y \gets Nxt$ \Comment{Now Y is original Y.next}
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+~\\
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to ii):} 
+If a list includes more than one element, we just need to remove the elements one by one from the second element, and then prepend them orderly, and then the list will be reversed. The "core" steps are the same with those in part i.
+\begin{algorithm}[H]
+\caption{Reverse a list}
+\begin{algorithmic}[1]
+\Procedure{ReverseList}{$Y$}
+  \If{$Y == Nil$}
+    \State return Y;
+  \Else
+    \State $cur \gets Y.next;$
+    \State $Y.next \gets Nil;$ \Comment{List ends here; otherwise the list will be a loop}
+    \While{$cur \neq Nil$}
+      \State $curNxt \gets cur.next$;
+      \State $cur.next \gets Y$;
+      \State $Y \gets cur$;
+      \State $cur \gets curNxt$;
+    \EndWhile
+  \EndIf
+  \State return Y;
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+~\\
+
+\noindent\textbf{Answer to iiia:} Take list 3, 4, 5, 6, 7 as an example, first we reverse the list and it will become: 7, 6, 5, 4, 3, then we change r.dat to be r.dat plus all of the .dat values in the records that precede r in the original list, and the list will be: 7, 13, 18, 22, 25; after that, we reverse the list again, and the list becomes: 25, 22, 18, 13, 7.
+
+The above steps can be summarized as below:
+\begin{itemize}
+    \item Reverse the list L;
+    \item Change r.dat to be r.dat plus all of the .dat values in the records that precede r in the original list;
+    \item Reverse list L again;
+\end{itemize}
+
+\vspace{1.2in}
+~\\
+
+\noindent\textbf{Answer to iiib:}
+Since the pointers cannot be modified, reverse is out of the picture. And since the first element's new $.dat$ value is the sum of all elements' $.dat$ value, we need to calculate the sum of all $.dat$ values of the list in the first round, and then try to modiy the $.dat$ to the required values in the second round.
+So the steps would be:
+\begin{itemize}
+    \item Iterate the first round to get the sum of all $.dat$ values in the elements
+    \item Iterate the second round and change the $.dat$ value of current node to sum, then subtract the original $.dat$ value of the current node from sum
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{Process a list in two passes}
+\begin{algorithmic}[1]
+\Procedure{ProcessListTwoPass}{$L$}
+  \State $sum \gets 0$
+  \State $cur \gets L$
+  \While{$cur \neq Nil$}
+    \State $sum += cur.dat$
+    \State $cur \gets cur.next$
+  \EndWhile
+  \State $cur \gets L$
+  \While{$cur \neq Nil$}
+    \State $origDat \gets cur.dat$
+    \State $cur.dat \gets sum$
+    \State $sum \gets sum - origDat$
+    \State $cur \gets cur.next$
+  \EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+~\\
+
+\noindent\textbf{Answer to iiic:} In the first pass, we just reverse the list. So list 3, 4, 5, 6, 7 would become 7, 6, 5, 4, 3. And in the second pass, we calculate the sum and reverse the list at the same time, so the list would become 25, 22, 18, 13, 7.
+
+\begin{algorithm}[H]
+\caption{Process a list with reverse}
+\begin{algorithmic}[1]
+\Procedure{ProcessListReverse}{$L$}
+  \State L = ReverseList(L);
+  \If{$L == Nil$}
+    \State return;
+  \Else
+    \State $cur \gets L.next;$
+    \State $L.next \gets Nil;$ \Comment{List ends here; otherwise the list will be a loop}
+    \State $sum \gets L.dat$
+    \While{$cur \neq Nil$}
+      \State $curNxt \gets cur.next$;
+      \State $cur.next \gets L$;
+      \State $sum \gets sum + L.dat$
+      \State $cur.dat \gets sum$
+      \State $L \gets cur$;
+      \State $cur \gets curNxt$;
+    \EndWhile
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+~\\
+
+
+\noindent\textbf{Answer to iiid:}
+Linked list can also be seen as a recursive data structure because each node can be seen as a node followed by a "sub-list". So we can visit each node recursively, calculate the sum and update the $.dat$ value for each node.
+
+\begin{algorithm}[H]
+\caption{iiid: Process a list and calculate sum forward}\label{iiid}
+\begin{algorithmic}[1]
+\Procedure{ProcessList}{$L, sum$}
+  \If{$L == Nil$}
+    \State return
+  \Else
+    \State $sum \gets L.dat + sum$
+    \State $L.dat \gets sum$
+    \State $ProcessList(L.next, sum)$
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+~\\
+
+
+\noindent\textbf{Answer to iiie:}
+We can see that the summation process can be seen as backwards, starting from the last element, and such "backward" processing can be easily achieved by recursion.
+\begin{algorithm}
+\caption{iiie: Process a list with recursion}\label{iiie}
+\begin{algorithmic}[1]
+\Procedure{ProcessList}{$L$}
+  \If{$L == Nil$}
+    \State return 0
+  \Else
+    \State $L.dat \gets L.dat + ProcessList(L.next)$
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+~\\
+
+\noindent\textbf{Answer to iv.a}
+As stated in the hint, we need two pointers, a slow one and a fast one. The slow one advances one step at a time and the fast one advances two steps at a time. If there is no loop, then the fast one arrives at end of the list($Nil$). If there is a loop, then both pointers will enter the loop and the faster one will "catch up with" the slower one.
+
+\begin{algorithm}[H]
+\caption{iv: Detec if there is loop in a list}\label{iv}
+\begin{algorithmic}[1]
+\Procedure{DetectLoop}{$L$}
+  \If{$L == Nil or L.next == Nil$}
+    \State return false;
+  \Else
+    \State $Slow \gets L$
+    \State $Fast \gets L.next$
+    \State $index \gets 0$
+    \While{$Slow \neq Fast$ and  $Fast \neq Nil$}
+      \If{$index$ is odd number}
+        \State $Slow \gets Slow.next$
+      \EndIf
+      \State $Slow \gets Slow + 1$
+      \State $Fast \gets Fast.next$
+    \EndWhile
+    \If{$Fast == Nil$}
+      \State return false;
+    \Else
+      \State return true;
+    \EndIf
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+~\\
+
+\noindent\textbf{Answer to iv.b:} Actually I've seen the solution of this question before(since this problem is a well-known interview question) and I believe the tricks used are beyond my ability as a beginner.
+
+The basic idea is that if there is a loop, the first time fast pointer and slow pointer meet, we stop one pointer and begin to advance the other pointer and start to count, when these two pointers meet again, the moving pointer has advanced $c$ steps, with $c$ being the length of the loop.
+
+\begin{algorithm}[H]
+\caption{iv.b: Count the loop}\label{iv.b}
+\begin{algorithmic}[1]
+\Procedure{CountLoop}{$L$}
+  \If{$L == Nil or L.next == Nil$}
+    \State return 0;
+  \Else
+    \State $Slow \gets L$
+    \State $Fast \gets L.next$
+    \State $index \gets 0$
+    \While{$Slow \neq Fast$ and  $Fast \neq Nil$}
+      \If{$index$ is odd number}
+        \State $Slow \gets Slow.next$
+      \EndIf
+      \State $Slow \gets Slow + 1$
+      \State $Fast \gets Fast.next$
+    \EndWhile
+    \If{$Fast == Nil$}
+      \State return 0;
+    \Else
+      \State $cnt \gets 1$
+      \State $Fast \gets Fast.next$
+      \While{$Fast \neq Slow$}
+        \State $Fast \gets Fast.next$
+        \State $cnt \gets cnt + 1$
+      \EndWhile
+      \State return cnt;
+    \EndIf
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+
+\noindent\textbf{Answer to iv.c:} I've seen the solution before and the tricks used(actually it is kind of like a brain twister) are beyond my ability as a beginner.
+
+The basic idea is based on iv.b. Assuming that we've found the length of the loop as $c$, now let's use two pointers, say $front$ and $back$. First, we advance pointer $front$ $c$ steps(remember that $c$ is length of the loop), then we start to move these two pointers together and start to count until $front$ and $back$ meet. Let $l$ be the length of the tail, then pointer $front$ moves $l+c$ steps in total and pointer $back$ moves $l$ steps in total.
+\begin{algorithm}[H]
+\caption{iv.b: Count the tail}\label{iv.c}
+\begin{algorithmic}[1]
+\Procedure{CountTail}{$L$}
+  \State $c \gets CountLoop(L)$
+  \State $Front \gets L$
+  \State $Back \gets L$
+  \While{$Front \neq Nil$ and $c \neq 0$}
+    \State $Front \gets Front.next$
+    \State $c \gets c-1$
+  \EndWhile
+  \If{$Front == Nil$}
+    \State return 0;
+  \EndIf
+  \State $l \gets 0$
+  \While{$Front \neq Back$}
+    \State $Front \gets Front.next$
+    \State $Back \gets Back.next$
+    \State $l \gets l+1$
+  \EndWhile
+  \State return $l$;
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{Ex. 1.12}
+To be honest, I highly doubted whether the algorithm provided by Professor Siegel is the correct one(i.e. whether it is the slowest one) and I even "designed" a slower one(at least I though it was slower), but after some thought, I started to realize how stupid I am.
+
+First the algorithm by Professor Siegel:
+\iffalse
+\begin{lstlisting}[label={list:eleventh},caption=Pseudo code -- slow Towers of Hanoi.]
+procedure SloTh(n, A, B, C);
+   input: the n smallest rings start on pole A in sorted order;
+   output: the n rings are moved in a legal, complicated pattern that ends with all on B in sorted order and as slow as possible;
+   if n equals 1 then:
+     move ring 1 from A to C;
+     move ring 1 from C to B;
+   else:
+     SloTh(n - 1, A, B, C); # move ring 1:n-1 from pole A to pole B
+     move ring n from A to C;
+     SloTh(n - 1, B, A, C); # move ring 1:n-1 from pole B to pole A
+     move ring n from C to B;
+     SloTh(n - 1, A, B, C); # move ring 1:n-1 from pole A to pole B
+   endif
+end_ SloTh
+\end{lstlisting}
+\fi
+
+\begin{algorithm}[H]
+\caption{Slow tower of Hanoi}\label{ex12}
+\begin{algorithmic}[1]
+\Procedure{SloTH}{$n, A, B, C$}
+  \State input: the n smallest rings start on pole A in sorted order;
+  \State output: the n rings are moved in a legal, complicated pattern that ends with all on B in sorted order and as slow as possible;
+  \If {$n==1$}
+   \State move ring 1 from A to C;
+   \State move ring 1 from C to B;
+  \Else
+   \State SloTh(n - 1, A, B, C); \Comment{move ring 1:n-1 from pole A to pole B}
+   \State move ring n from A to C;
+   \State SloTh(n - 1, B, A, C); \Comment{move ring 1:n-1 from pole B to pole A}
+   \State move ring n from C to B;
+   \State SloTh(n - 1, A, B, C); \Comment{move ring 1:n-1 from pole A to pole B}
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+[The following discussion were based on my own understanding on September 5th. However, Professor Siegel explained this problem thoroughly in the recitation session on September 9th. On one hand I was happy that my own understanding was correct, but one the other hand it is basically the same with Professor Seigel's explanation.]
+
+Discussion regarding Listing~\ref{list:third}\ldots{} 
+As professor Seigel said, the first step to solve a problem is to ask the right question. So the first question I want to ask is: for n rings how many configurations are possible?
+
+\textbf{Answer}: The constraint is that smaller rings should be placed on top of larger rings. So let's place these n rings one by one from large to small to ensure of that constraint. As discussed, the possible places for ring n(the largest one) is 3, and the possible places for ring n - 1 is 3, and so on. As a result, for n rings, the number of all configurations Cf(n) is:
+
+$$Cf(n) = 3^{n}$$
+
+Now let's calculate the ring-move count R(n) for procedure SloTh(n, A, B, C).
+From the recursion we know that:
+$$R(n)=\left\{
+\begin{aligned}
+&2  & if\; &  n = 1 \\
+&3R(n-1) + 2  & if\; &  n > 1 \\
+\end{aligned}
+\right.
+$$
+The above equation is a linear recursive equation and we can easily find its solution as:
+$$
+R(n) = 3^{n} - 1
+$$
+Each ring remove produces one configuration, and if we count the initial configuration(i.e. all n rings are on pole A), then the number of all possible configurations from these moves are:
+$$
+Cm(n) = 3^{n}
+$$
+Obviously, $$Cf(n) = Cm(n)$$, but can we say that procedure SloTh(n, A, B, C) produces all the possible configurations? Unfortunately we do not have much confidence to say yes at the moment because there might be duplicates in configurations produced by procedure SloTh(n, A, B, C).
+
+So our next task is to prove(or disprove) all configurations produced by procedure SloTh(n, A, B, C) are unique, i.e. there are no duplicates in them.
+
+The only thing we can rely on is the recursion relationship.
+
+First, let's check the base case(i.e. n = 1)
+When n = 1, we move ring 1 from pole A to pole C, then from pole C to pole B. This produces two steps and 3 different configurations. So our guess is correct for n = 1.
+
+Now let's assume that SloTh(n - 1, A, B, C) produces $3^{n-1}$ different configurations(i.e. no duplicates). It is time to stare at the recursive procedure.
+
+When SloTh(n - 1, A, B, C) is called, the largest ring(ring n) sits on pole A, so we have $3^{n-1}$ different configurations with ring n on pole A.
+
+Then our program moves ring n from pole A to pole C and calls SloTh(n - 1, B, A, C). Same story, we have $3^{n-1}$ different configurations with ring n on pole C.
+
+At last, our program moves ring n from pole C to pole B and calls Sloth(n - 1, A, B, C), this produces $3^{n-1}$ different configurations with ring n on pole B.
+
+There are no duplicates in the configurations above because:
+
+1. When ring n sit on a specific pole(A or B or C), there are no duplicates.
+
+2. When ring n sit on different poles, there are still no duplicates because ring n's place is different.
+
+
+\end{document}
