@@ -1,0 +1,231 @@
+%%% Template originaly created by Karol Kozioł (mail@karol-koziol.net) and modified for ShareLaTeX use
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\renewcommand\familydefault{\sfdefault}
+\usepackage{tgheros}
+\usepackage[defaultmono]{droidmono}
+
+\usepackage{amsmath,amssymb,amsthm,textcomp}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+\usepackage{geometry}
+\geometry{total={210mm,297mm},
+left=25mm,right=25mm,%
+bindingoffset=0mm, top=20mm,bottom=20mm}
+
+
+\linespread{1.3}
+
+\newcommand{\linia}{\rule{\linewidth}{0.5pt}}
+
+
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+
+%\algdef{S}{IN}[1]{\algorithmicin\ #1}
+
+% custom theorems if needed
+\newtheoremstyle{mytheor}
+    {1ex}{1ex}{\normalfont}{0pt}{\scshape}{.}{1ex}
+    {{\thmname{#1 }}{\thmnumber{#2}}{\thmnote{ (#3)}}}
+
+\theoremstyle{mytheor}
+\newtheorem{defi}{Definition}
+
+% my own titles
+\makeatletter
+\renewcommand{\maketitle}{
+\begin{center}
+\vspace{2ex}
+{\huge \textsc{\@title}}
+\vspace{1ex}
+\\
+\linia\\
+\@author \hfill \@date
+\vspace{4ex}
+\end{center}
+}
+\makeatother
+%%%
+
+% custom footers and headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{Assignment \textnumero{} 2}
+\cfoot{}
+\rfoot{Page \thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+%
+
+% code listing settings
+\usepackage{listings}
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    aboveskip={1.0\baselineskip},
+    belowskip={1.0\baselineskip},
+    columns=fixed,
+    extendedchars=true,
+    breaklines=true,
+    tabsize=4,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    frame=lines,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    keywordstyle=\color[rgb]{0.627,0.126,0.941},
+    commentstyle=\color[rgb]{0.133,0.545,0.133},
+    stringstyle=\color[rgb]{01,0,0},
+    numbers=left,
+    numberstyle=\small,
+    stepnumber=1,
+    numbersep=10pt,
+    captionpos=t,
+    escapeinside={\%*}{*)}
+}
+
+%%%----------%%%----------%%%----------%%%----------%%%
+
+\begin{document}
+
+\title{Assignment \textnumero{} 2}
+
+\author{Liheng Gong, lg2848@nyu.edu}
+
+\date{09/14/2017}
+
+\maketitle
+
+\section*{Ex. 2.1}
+\noindent\textbf{Answer to a:} preorder: visit root first, then recursively visit left subtree and right subtree. So the list should be: \\51, 6, 3, 5, 14, 7, 11
+\vspace{1.2in}
+
+
+\noindent\textbf{Answer to b:} inorder: (recursively) visit left subtree first, then visit root, then (recursively) visit right subtree. So the list should be:\\ 3, 5, 6, 7, 11, 14, 51 \\Due to the properties of binary search tree(BST), inorder traversal of a BST should produce a sorted list of numbers in ascending order.
+\vspace{1.2in}
+
+\noindent\textbf{Answer to b:} postorder: (recursively) visit left subtree and right subtree, then visit root node. So the list should be: \\5, 3, 11, 7, 14, 6, 51
+
+\vspace{1.2in}
+
+\section*{Ex. 2.30}
+No matter how the representation varies, the structure of a post order traversal procedure is the same. The node's each child is recursively visited, and then the node itself is visited upon exit.
+\begin{algorithm}[H]
+\caption{Post order traversal of a specific representation of an arbitrary tree}\label{POSTORDER_2_30}
+\begin{algorithmic}[1]
+\State global $child[m,n]$
+\Procedure{PostOrder}{$t$} \Comment{$PostOrder$ receives vertex name as parameter}
+  \ForEach {$i$ in $range[1 ... child[t, 0]]$} \Comment{$child[t,0]$ is the number of child for t}
+    \State PostOrder($child[t, i]$) \Comment{$child[t,i]$ is the name of child for t}
+  \EndFor
+  \State visit $t$ \Comment{Visit $t$ upon exit}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{Ex.2.2}
+Since each internal node is an operator, to evaluate the value using this operator, we need to first get the value of both of its children, which implies a post order traversal.
+
+\begin{algorithm}[H]
+\caption{Tree evaluation of an arithmatic expression}\label{TREEEVALUATION_2_2}
+\begin{algorithmic}[1]
+\Function{TreeEval}{$T$}
+  \If {$T$ is leaf}
+    \State return $T.val$
+  \EndIf
+  \State leftVal = $TreeEval(T.left)$
+  \State rightVal = $TreeEval(T.right)$
+  \State return $Eval(T.op, leftVal, rightVal)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{Ex. 2.3}
+\noindent\textbf{Answer to a):} By definition, if $x$ is a tree vetex, $x.small$ is expected to store the smallest value in the subtree rooted by $x$(including $x$ itself.) after the evaluation. So let's reason out the evaluation process.
+
+For a specific node $t$, if $t$ has no children(i.e. $t$ is a leaf), then $t.small \gets t.val$. Otherwise, we need to traverse every child node, say $w$, of $t$ and get $w.small$. And this process can be done recursively. After all of $t$'s children's $.small$ field have been updated, $t.small$ can be updated by comparing those values and selecting the smallest one. The update of $t.small$ can only be done in a postorder fashion because $t.small$ cannot be decided until all of its children's $.small$ field have been updated.
+
+The above process can be translated to pseudo code below:
+
+\begin{algorithm}[H]
+\caption{Questionable tree evaluation of an arithmetic expression}\label{sec:TREEEVALUATION_2_3_1}
+\begin{algorithmic}[1]
+\Function{TreeMinVal}{$T$}
+  \If{T is a leaf}
+    \State $T.small \gets T.val$
+    \State return $T.small$
+  \Else
+    \State $minVal \gets T.val$
+    \ForEach{child $w$ of $T$}
+      \State $minVal \gets min\{minVal, TreeMinVal(w)$\} \Comment{Recursively update all of $t$'s children's $.small$ field}
+    \EndFor
+    \State $T.small \gets minVal$
+    \State return $T.small$
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+After some analysis, the code in Algorithm \ref{sec:TREEEVALUATION_2_3_1} can be made more compact as below:
+
+\begin{algorithm}[H]
+\caption{Questionable tree evaluation of an arithmetic expression}\label{sec:TREEEVALUATION_2_3_2}
+\begin{algorithmic}[1]
+\Function{TreeMinVal2}{$T$}
+  \State $minVal \gets T.val$
+  \ForEach{child $w$ of $T$}
+    \State $minVal \gets min\{minVal, TreeMinVal2(w)$\} \Comment{Recursively update all of $t$'s children's $.small$ field}
+  \EndFor
+  \State $T.small \gets minVal$
+  \State return $T.small$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to b):} In addition to the smallest value, we also store the address of that node. Also, in addition to returning the smallest value, we return a tuple this time, including both the smallest value and the address of the corresponding node.
+
+\begin{algorithm}[H]
+\caption{Questionable tree evaluation of an arithmetic expression}\label{sec:TREEEVALUATION_2_3_b}
+\begin{algorithmic}[1]
+\Function{TreeMinValPointer}{$T$}
+  \State $minVal \gets T.val$
+  \State $minPtr \gets T$
+  \ForEach{child $w$ of $T$}
+    \If{$.value\;of\;TreeMinValPointer(w) < minVal$}
+      \State $minVal \gets .value\;of\;TreeMinValPointer(w)$
+      \State $minPtr \gets .pointer\;of\;TreeMinValPointer(w)$
+    \EndIf
+  \EndFor
+  \State $T.small \gets minVal$
+  \State $T.which \gets minPtr$
+  \State return ($T.small, T.which$)   \Comment{return both value and pointer}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{Ex. 2.4}
+
+
+\end{document}
