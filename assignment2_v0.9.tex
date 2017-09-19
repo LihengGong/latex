@@ -1,0 +1,624 @@
+%%% Template originaly created by Karol Kozioł (mail@karol-koziol.net) and modified for ShareLaTeX use
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\renewcommand\familydefault{\sfdefault}
+\usepackage{tgheros}
+\usepackage[defaultmono]{droidmono}
+
+\usepackage{amsmath,amssymb,amsthm,textcomp}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+\usepackage{geometry}
+\geometry{total={210mm,297mm},
+left=25mm,right=25mm,%
+bindingoffset=0mm, top=20mm,bottom=20mm}
+
+
+\linespread{1.3}
+
+\newcommand{\linia}{\rule{\linewidth}{0.5pt}}
+
+
+\algnewcommand\algorithmicforeach{\textbf{foreach}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+
+%\algdef{S}{IN}[1]{\algorithmicin\ #1}
+
+% custom theorems if needed
+\newtheoremstyle{mytheor}
+    {1ex}{1ex}{\normalfont}{0pt}{\scshape}{.}{1ex}
+    {{\thmname{#1 }}{\thmnumber{#2}}{\thmnote{ (#3)}}}
+
+\theoremstyle{mytheor}
+\newtheorem{defi}{Definition}
+
+% my own titles
+\makeatletter
+\renewcommand{\maketitle}{
+\begin{center}
+\vspace{2ex}
+{\huge \textsc{\@title}}
+\vspace{1ex}
+\\
+\linia\\
+\@author \hfill \@date
+\vspace{4ex}
+\end{center}
+}
+\makeatother
+%%%
+
+% custom footers and headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{Assignment \textnumero{} 2}
+\cfoot{}
+\rfoot{Page \thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+%
+
+% code listing settings
+\usepackage{listings}
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    aboveskip={1.0\baselineskip},
+    belowskip={1.0\baselineskip},
+    columns=fixed,
+    extendedchars=true,
+    breaklines=true,
+    tabsize=4,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    frame=lines,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    keywordstyle=\color[rgb]{0.627,0.126,0.941},
+    commentstyle=\color[rgb]{0.133,0.545,0.133},
+    stringstyle=\color[rgb]{01,0,0},
+    numbers=left,
+    numberstyle=\small,
+    stepnumber=1,
+    numbersep=10pt,
+    captionpos=t,
+    escapeinside={\%*}{*)}
+}
+
+%%%----------%%%----------%%%----------%%%----------%%%
+
+\begin{document}
+
+\title{Assignment \textnumero{} 2}
+
+\author{Liheng Gong, lg2848@nyu.edu}
+
+\date{09/14/2017}
+
+\maketitle
+
+\section*{Ex. 2.1}
+\noindent\textbf{Answer to a:} preorder: visit root first, then recursively visit left subtree and right subtree. So the list should be: \\51, 6, 3, 5, 14, 7, 11
+\vspace{1.2in}
+
+
+\noindent\textbf{Answer to b:} inorder: (recursively) visit left subtree first, then visit root, then (recursively) visit right subtree. So the list should be:\\ 3, 5, 6, 7, 11, 14, 51 \\Due to the properties of binary search tree(BST), inorder traversal of a BST should produce a sorted list of numbers in ascending order.
+\vspace{1.2in}
+
+\noindent\textbf{Answer to b:} postorder: (recursively) visit left subtree and right subtree, then visit root node. So the list should be: \\5, 3, 11, 7, 14, 6, 51
+
+\vspace{1.2in}
+
+\section*{Ex. 2.30}
+No matter how the representation varies, the structure of a post order traversal procedure is the same. The node's each child is recursively visited, and then the node itself is visited upon exit.
+\begin{algorithm}[H]
+\caption{Post order traversal of a specific representation of an arbitrary tree}\label{POSTORDER_2_30}
+\begin{algorithmic}[1]
+\State global $child[m,n]$
+\Procedure{PostOrder}{$t$} \Comment{$PostOrder$ receives vertex name as parameter}
+  \ForEach {$i$ in $range[1 ... child[t, 0]]$} \Comment{$child[t,0]$ is the number of child for t}
+    \State PostOrder($child[t, i]$) \Comment{$child[t,i]$ is the name of child for t}
+  \EndFor
+  \State visit $t$ \Comment{Visit $t$ upon exit}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{Ex.2.2}
+Since each internal node is an operator, to evaluate the value using this operator, we need to first get the value of both of its children, which implies a post order traversal.
+
+\begin{algorithm}[H]
+\caption{Tree evaluation of an arithmatic expression}\label{TREEEVALUATION_2_2}
+\begin{algorithmic}[1]
+\Function{TreeEval}{$T$}
+  \If {$T$ is leaf}
+    \State return $T.val$
+  \EndIf
+  \State leftVal = $TreeEval(T.left)$
+  \State rightVal = $TreeEval(T.right)$
+  \State return $Eval(T.op, leftVal, rightVal)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+\noindent\textbf{Discussion:} Actually there is still one problem I haven't resolved yet: the order of the operand. If the operator is $-$ or $/$, then the order of the operand matters. For example, if the expression is $2-6$, then the post order string is $2, 6, -$, and in a stack their order is $2,6,-$ from bottom to top. When popped from the stack, the order becomes: $-, 6, 2$, and the evaluation could be $6-2$ or $2-6$, depending on the implementation of function $eval$, of course only the latter is correct. So my answer is based on a huge assumption: function $eval$ can correctly adjust its two operands' order if the operator is $-$ or $/$; otherwise, my answer will yield wrong results.
+
+\vspace{1.2in}
+
+\section*{Ex. 2.3}
+\noindent\textbf{Answer to a):} By definition, if $x$ is a tree vetex, $x.small$ is expected to store the smallest value in the subtree rooted by $x$(including $x$ itself.) after the evaluation. So let's reason out the evaluation process.
+
+For a specific node $t$, if $t$ has no children(i.e. $t$ is a leaf), then $t.small \gets t.val$. Otherwise, we need to traverse every child node, say $w$, of $t$ and get $w.small$. And this process can be done recursively. After all of $t$'s children's $.small$ field have been updated, $t.small$ can be updated by comparing those values and selecting the smallest one. The update of $t.small$ can only be done in a postorder fashion because $t.small$ cannot be decided until all of its children's $.small$ field have been updated.
+
+The above process can be translated to pseudo code below:
+
+\begin{algorithm}[H]
+\caption{Tree min value}\label{sec:TREEEVALUATION_2_3_1}
+\begin{algorithmic}[1]
+\Function{TreeMinVal}{;;$T$}\Comment{$T$ is mutable}
+  \If{T is a leaf} \label{sec:TREEEVALUATION_2_3_1_L1}
+    \State $T.small \gets T.val$
+    \State return $T.small$ \label{sec:TREEEVALUATION_2_3_1_L2}
+  \Else
+    \State $minVal \gets T.val$
+    \ForEach{child $w$ of $T$}
+      \State $minVal \gets min\{minVal, TreeMinVal(w)$\} \Comment{Recursively update all of $t$'s children's $.small$ field}
+    \EndFor
+    \State $T.small \gets minVal$
+    \State return $T.small$
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+After some analysis, the code in Algorithm \ref{sec:TREEEVALUATION_2_3_1} can be made more compact as below since the $for$ loop will not be executed if a node is leaf:
+
+\begin{algorithm}[H]
+\caption{tree min value}\label{sec:TREEEVALUATION_2_3_2}
+\begin{algorithmic}[1]
+\Function{TreeMinVal2}{;;$T$}\Comment{$T$ is mutable}
+  \State $minVal \gets T.val$
+  \ForEach{child $w$ of $T$}
+    \State $minVal \gets min\{minVal, TreeMinVal2(w)$\} \Comment{Recursively update all of $t$'s children's $.small$ field}
+  \EndFor
+  \State $T.small \gets minVal$
+  \State return $T.small$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+\textbf{[discussion]} Regarding the "leaf checking" part in Algorithm \ref{sec:TREEEVALUATION_2_3_1}(line \ref{sec:TREEEVALUATION_2_3_1_L1} to line \ref{sec:TREEEVALUATION_2_3_1_L2}), Professor Siegel also mentioned it in the recitation session on Sept. 14th, and I totally agree with Professor Siegel. Writing redundant code not only complexes the program structure, it is also error prone.
+
+\vspace{1.2in}
+
+
+\noindent\textbf{Answer to b):} In addition to the smallest value, we store the address of that node. Also, in addition to returning the smallest value, we return a tuple this time, including both the smallest value and the address of the corresponding node.
+
+\begin{algorithm}[H]
+\caption{tree min value}\label{sec:TREEEVALUATION_2_3_b}
+\begin{algorithmic}[1]
+\Function{TreeMinValPointer}{$T$}\Comment{$T$ is mutable}
+  \State $minVal \gets T.val$
+  \State $minPtr \gets T$
+  \ForEach{child $w$ of $T$}
+    \If{$.value\;of\;TreeMinValPointer(w) < minVal$}
+      \State $minVal \gets .value\;of\;TreeMinValPointer(w)$
+      \State $minPtr \gets .pointer\;of\;TreeMinValPointer(w)$
+    \EndIf
+  \EndFor
+  \State $T.small \gets minVal$
+  \State $T.which \gets minPtr$
+  \State return ($T.small, T.which$)   \Comment{return both value and pointer}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{Ex. 2.4}
+\noindent\textbf{Answer to a):} 
+\begin{algorithm}[H]
+\caption{DFS postorder}\label{sec:TREEEVALUATION_2_4_a}
+\begin{algorithmic}[1]
+\Procedure{DFS}{$T$}
+  \ForEach{child $w$ of $T$}
+    \State DFS(w)
+  \EndFor
+  \State print($T$)
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to b):} The basic program structure should still be poster order since a post order printing(with minor adjustment) is required. The new sequence can be viewed as a shift by one place of the original post-order sequence, so we can designate X to be mutable, so that X can be used as the "backpack" to hold the $.val$ value of a precedent node during the post-order traversal. So the code in Algorithm \ref{sec:TREEEVALUATION_2_4_a} can be adjusted as the pseudo code below:
+\begin{algorithm}[H]
+\caption{rotate}\label{sec:TREEEVALUATION_2_4_b}
+\begin{algorithmic}[1]
+\Procedure{Rotate}{$T,X$}
+  \State $OrigVal \gets T.val$
+  \ForEach{child $w$ of $T$}
+    \State Rotate($w, X$) \label{sec:TREEEVALUATION_2_4_b_L1}
+  \EndFor
+  \State $T.val \gets X$
+  \State $X \gets OrigVal$
+  \State print($T$)
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\noindent\textbf{Discussion:} I was stuck for a while when I was working on Algorithm \ref{sec:TREEEVALUATION_2_4_b} because I was not quite sure what the second argument of $Rotate$ in line \ref{sec:TREEEVALUATION_2_4_b_L1} of the above pseudo code should be when making the recursive call. After a little thinking, I realized that since $X$ is the "knapsack", it should be "carried" along the way when the tree is traversed, so the argument should be $X$.
+
+\vspace{1.2in}
+
+\section*{Ex. 2.5}
+\noindent\textbf{Answer:} Each time function $StackEval$ is called, an element will be popped from the stack. If that element is a number, it will be returned directly. If the element is an operator, the evaluation process will start, which means two elements will be popped from the stack. If these two elements are numbers, the evaluation process will produce a number as the result. If one or both elements are operator(s), there will be recursive calls.
+
+So that line should be:
+
+return $(eval(x, StackEval(L), StackEval(L)))$
+\vspace{1.2in}
+
+\section*{Ex. 2.6}
+\noindent\textbf{Answer to a):} $S$ and $T$ are reverse to each other. 
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to b):} The post-order traversal produces a list in the order of \\ $left\; subtree \rightarrow right\; subtree \rightarrow root$, \\while the "modified" pre-order traversal produces a list in the order of \\$root \rightarrow right\;subtree \rightarrow left\;subtree$ \\ and in each subtree, this "reverse" rule also applies recursively, so the final result is that $S$ and $T$ are reverse to each other.
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to c):} The hint of using another stack is enough to solve this problem. Since the operator applies to the two numbers immediately preceding it, the process is straightforward if we use an auxiliary stack $AS$:
+\begin{itemize}
+    \item pop one item from stack $L$. \item If this item is a number, push it to auxiliarty stack $AS$. \item If it is an operator, pop two items(these two items should be two numbers) from auxiliary stack $AS$ and apply the operator to the two newly popped numbers. \item repeat the process above until stack $L$ is empty. \item After the process is done, there will be one number in the auxiliary stack $AS$ and that number is the final result.
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{evaluation of an arithmetic expression}\label{sec:TREEEVALUATION_2_6_C}
+\begin{algorithmic}[1]
+\Function{StkEvalIter}{$L$}
+  \State create auxiliary stack $AS$
+  \While {L is not empty}
+    \State $x \gets PopFrom(L)$
+    \If{x is a number}
+      \State $PushTo(AS, x)$ \Comment{$AS$ is auxiliary stack}
+    \Else
+      \State $n2 \gets PopFrom(AS)$
+      \State $n1 \gets PopFrom(AS)$
+      \State $result \gets eval(x, n1, n2)$
+      \State $PushTo(AS, result)$
+    \EndIf
+  \EndWhile
+  \State $val \gets PopFrom(AS)$
+  \State return $val$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to d):} The steps are similar to those in part c). 
+\begin{itemize}
+    \item if the item in the list is a number, do nothing.
+    \item if the item in the list ia an operator, fetch the two numbers preceding the current operator. \item Remove the two preceding numbers from the list. \item apply the operator on these two numbers and insert the result in the current position of the list. \item repeat until the list only contains one number and that number is the result.
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{evaluation of an arithmetic expression}\label{sec:TREEEVALUATION_2_6_D}
+\begin{algorithmic}[1]
+\Function{StkEvalList}{$L$}
+  \While {L contains more than one element}
+    \State $x \gets current\;element\;of\; L$
+    \If{x is an operator}
+      \State remove the two preceding numbers $firstNum$ and $secondNum$ from $L$
+      \State $n1 \gets firstNum;\;n2 \gets secondNum$\Comment{store these two numbers in n1 and n2}
+      \State $result \gets x\;\; op\;\; y$ \Comment{apply x to n1 and n2 and get the result}
+      \State link $result$ into current position of $L$
+    \EndIf
+    \State move to the next element in the list
+  \EndWhile
+  \State return value in $L$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{2.8}
+\noindent\textbf{Answer:} The root node needs to gather information from all of its children before it can get the number, so this is a post-order traversal.
+
+\begin{algorithm}[H]
+\caption{Tree leaf number}\label{sec:TREEEVALUATION_2_8}
+\begin{algorithmic}[1]
+\Function{LeafNum}{$T$}
+  \State $T.numb \gets 0$
+  \ForEach{child $w$ of node $T$} \Comment{For leaf nodes, this for loop will not be executed}
+    \State $T.numb \gets T.num + LeafNum(w)$
+  \EndFor
+  \State return $T.num$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{2.9}
+\noindent\textbf{Answer:} The program structure is very similar to that of Exercise 2.8. The $.dis$ field of the root node cannot be decided until all of its children have (recursively) updated that field. So this is a post-order traversal.
+
+\begin{algorithm}[H]
+\caption{tree distance}\label{sec:TREEEVALUATION_2_9}
+\begin{algorithmic}[1]
+\Function{TreeDis}{$T$}
+  \State $T.dis \gets 0$
+  \ForEach{child $w$ of node $T$}
+    \State $T.dis \gets max\{ T.dis, TreeDis(w) + 1\}$
+  \EndFor
+  \State return $T.dis$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{2.10}
+\noindent\textbf{Answer:} Field $.1dis$ can be calculated using the method in \textbf{Ex. 2.9}, while field $.2dis$ is more difficult. First, field $.2dis$ should also be updated via DFS traversal, but in a restricted fashion because one child(through which the farthest leaf is found) should be ruled out.
+
+\begin{algorithm}[H]
+\caption{Recursive list processing}\label{sec:TREEEVALUATION_2_10}
+\begin{algorithmic}[1]
+\Function{TreeDist}{$;;T$}
+  \State $T.1dis \gets 0$
+  \ForEach{child $w$ of $T$}
+    \State $(dist1, dist2) \gets TreeDist(w)$ \Comment{$T.1dis$ and $T.2dis$ are returned as a tuple}
+    \If{$dist1 > T.1dis$}
+      \State $T.1dis \gets dist1$
+      \State $disChild \gets w$
+    \EndIf
+  \EndFor
+  \State $T.2dis \gets -\infty$
+  \ForEach{child $c$ of $T$ except $disChild$}
+    \State $(dist1, dist2) \gets TreeDist(c)$
+    \If{$dist2 > T.2dis$}
+      \State $T.2dis \gets dist2$
+    \EndIf
+  \EndFor
+  \State return ($T.1dis, T.2dis$)
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{2.19}
+\noindent\textbf{Answer to a:} Preorder listing of $T$ and $S$ produce the same sequence.\\
+Discussion: A pre-order traversal for an arbitrary tree follows the order of root, first child, second child, ..., last child in a recursive manner. And a pre-order traversal for a corresponding binary tree follows the order of root, left subtree(corresponding to the first child) and right subtree(corresponding the second child)
+
+The preorder traversal of an arbitrary tree will not visit a node's sibling on the right until all of this node's descendents(i.e. the subtree rooted by this node) have been visited. Likewise, for a corresponding binary tree, a node's right subtree(which corresponds to a node's siblings) will not be visited until all the nodes in its left subtree(which corresponds to a node's children) have been visited.
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to b:} A post-order listing in T and S produces different sequences. Consider a simple arbitrary tree with the following structure:
+
+root is 1; the first child(left child) is 2 and the the second child(right child) is 3.
+
+This tree's binary tree representation is: root is 1; root's left child is 2; root's left child's right child is 3.
+
+So the arbitrary tree's postorder listing gives: 2, 3, 1
+
+And the corresponding binary tree's posterorder listing gives: 3, 2, 1
+
+Apparently these two listings are different.
+
+\noindent\textbf{Discussion:} The corresponding binary tree's inorder traversal listing gives: 2, 3, 1, so we have a guess that arbitrary tree's post-order traversal and the corresponding binary tree representation's in-order traversal give the same listing.
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to c1:} 
+
+\begin{algorithm}[H]
+\caption{preorder with parent node}\label{sec:TREEEVALUATION_2_19_C1}
+\begin{algorithmic}[1]
+\Procedure{Parent}{$v, pv$}
+  \State $print(v, pv)$\Comment{Print $v$ and its parent $pv$}
+  \ForEach{child $w$ in $child[v]$}
+    \State $Parent(w, v)$\Comment{$v$ is $w$'s parent}
+  \EndFor
+\EndProcedure
+\State
+\Procedure{ParentDriver}{$T$}
+  \State $Parent(T, Nil)$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to c2:} Pre-order traversal of an arbitrary tree and pre-order traversal of the corresponding binary tree produce the same listing. One subtlety is that in the binary tree representation, a node's(say $t$) right child corresponds to $t$'s sibling in the original arbitrary tree, and this relationship should be considered during the binary tree traversal process.
+
+\begin{algorithm}[H]
+\caption{postorder with parent node with binary tree representation}\label{sec:TREEEVALUATION_2_19_C2}
+\begin{algorithmic}[1]
+\Procedure{ParentBinaryTree}{$v, pv$}
+  \If{$v == Nil$}
+    \State return
+  \Else
+    \State $print(v, pv)$
+    \State $ParentBinaryTree(v, v.left)$ \Comment{For the left child, the parent-child relationship holds}
+    \State $ParentBinaryTree(pv, v.right)$ \Comment{A right child in the binary tree corresponds to a sibling in the original arbitrary tree}
+  \EndIf
+\EndProcedure
+\State
+\Procedure{ParentBTDriver}{$S$}
+  \State $ParentBinaryTree(S, Nil)$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to d1:}
+\begin{algorithm}[H]
+\caption{preorder with parent node}\label{sec:TREEEVALUATION_2_19_D1}
+\begin{algorithmic}[1]
+\Procedure{Parent}{$v, pv$}
+  \ForEach{child $w$ in $child[v]$}
+    \State $Parent(w, v)$
+  \EndFor
+  $print(v, pv)$
+\EndProcedure
+\State
+\Procedure{ParentDriver}{$T$}
+  \State $Parent(T, Nil)$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to d2:} The difficulty is that post-order listing of an arbitrary tree and post-order listing of the corresponding binary tree yield different results, so for the binary tree representation, a post-order traversal is off the table. But we do find that the in-order traversal of the binary tree yields the same listing as that of the arbitrary tree.
+
+But can we prove it? An in-order traversal of a binary tree visit the left sub-tree first, then the node itself, then the right sub-tree. The left sub-tree corresponds the child of the node in the corresponding arbitrary tree, and the right sub-tree corresponding the sibling(s). So the in-order traversal of the binary tree means in the original arbitrary tree descendents are visited first, then the node itself, then the node's siblings, which is a post-order traversal for that original arbitrary tree.
+
+\begin{algorithm}[H]
+\caption{postorder with parent node with binary tree representation}\label{sec:TREEEVALUATION_2_19_D2}
+\begin{algorithmic}[1]
+\Procedure{ParentBinaryTree}{$v, pv$}
+  \If{$v == Nil$}
+    \State return
+  \Else
+    \State $ParentBinaryTree(v, v.left)$ \Comment{For the left child, the parent-child relationship holds}
+    \State $print(v, pv)$
+    \State $ParentBinaryTree(pv, v.right)$ \Comment{A right child in the binary tree corresponds to a sibling in the original arbitrary tree}
+  \EndIf
+\EndProcedure
+\State
+\Procedure{ParentDriver}{$S$}
+  \State $Parent(S, Nil)$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to e:} Based on the discussion in Page 80 of our textbook, we just need to make minor adjustment to procedure DFS2: print the parent as well as the child.
+\begin{algorithm}[H]
+\caption{postorder without parent node}\label{sec:TREEEVALUATION_2_19_E}
+\begin{algorithmic}[1]
+\Procedure{Parent}{$v$}
+  \ForEach{child $w$ in $child[v]$}
+    \State $Parent(w, v)$\Comment{$v$ is $w$'s parent}
+    \State $print(w, v)$\Comment{Print child $w$ and its parent $v$}
+  \EndFor
+\EndProcedure
+\State
+\Procedure{ParentDriver}{$T$}
+  \State $Parent(T)$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+
+\section*{2.20}
+\noindent\textbf{Answer:} If we designate the parameter $L$(the list) to be mutable, the recursion can be written as below:
+
+\begin{algorithm}[H]
+\caption{Recursive list processing}\label{sec:TREEEVALUATION_2_20}
+\begin{algorithmic}[1]
+\Procedure{RemoveZeros}{$;;L$}\Comment{L is mutable}
+  \If{$L == Nil$}
+    \State return
+  \ElsIf{$L.val == 0$}
+    \State $L \gets L.next$ \Comment{directly jump over current node}
+  \EndIf
+  \If{$L\;!= Nil$}
+    \State RemoveZeros($L.next$)
+  \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\section*{2.23}
+\noindent\textbf{Answer to a):} The basic idea of selection sort is as below:
+\begin{itemize}
+    \item find the largest element in $1$ through $N$ and place that value in $A[N]$
+    \item find the largest element in $1$ through $N-1$ and place that value in $A[N-1]$
+    \item repeat the steps above until all elements are in the right place.
+\end{itemize}
+
+The outer loop can be easily transformed into recursion since for each round in the loop the problem is reduced from size $n$ to size $n-1$, and the problem structure is the same after each loop: find the largest element in index $1$ through $k$ and place it in the last place $k$.
+
+\begin{algorithm}[H]
+\caption{Recursive selection sort}\label{sec:TREEEVALUATION_2_23_a}
+\begin{algorithmic}[1]
+\Procedure{SelectionSortRe}{$index;;Data[1..n]$}
+  \If {$index == 1$}
+    \State return
+  \EndIf
+  \State $largest \gets Data[1]$
+  \State $indL \gets 1$
+  \For {$k$ from $2 \rightarrow index$}
+    \If{$Data[k] > largest$}
+      \State $largest \gets Data[k]$
+      \State $indL \gets k$
+    \EndIf
+  \EndFor
+  \State $swap(Data[index], Data[indL])$
+  \State $SelectionSortRe(index - 1, Data[1..n-2])$
+\EndProcedure
+\State
+\Procedure{SelectionSortDriver}{$n;;Data[1..n]$}\Comment{Driver procedure}
+  \State $SelectionSortRe(n, Data[1..n])$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\noindent\textbf{Answer to b):} We just print the list when remaining element is only one and undo the swap at the recursive function's post-order exit time. So the pseudo code is as below:
+
+\begin{algorithm}[H]
+\caption{Recursive selection sort in a forgetful way}\label{sec:TREEEVALUATION_2_23_b}
+\begin{algorithmic}[1]
+\Procedure{SelectionSortReUnswap}{$index;;Data[1..n]$}
+  \If {$index == 1$}
+    \State print(Data[1..n])  \Comment{Print the list when remaining element is only one}
+    \State return
+  \EndIf
+  \State $largest \gets Data[1]$
+  \State $indL \gets 1$
+  \For {$k$ from $2 \rightarrow index$}
+    \If{$Data[k] > largest$}
+      \State $largest \gets Data[k]$
+      \State $indL \gets k$
+    \EndIf
+  \EndFor
+  \State $swap(Data[index], Data[indL])$
+  \State $SelectionSortRe(index - 1, Data[1..n-1])$
+  \State $swap(Data[index], Data[indL])$ \Comment{Undo the swap}
+\EndProcedure
+\State
+\Procedure{SelectionSortDriver}{$n;;Data[1..n]$}\Comment{Driver procedure}
+  \State $SelectionSortReUnswap(n, Data[1..n])$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\vspace{1.2in}
+
+\end{document}
